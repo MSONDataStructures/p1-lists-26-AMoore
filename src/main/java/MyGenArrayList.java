@@ -16,14 +16,14 @@
  * and you will need to throw the <code>NullPointerException</code> in places
  * as specified in the Javadoc and the JUnit <code>MyArrayListTest</code> class.
  }}}*/
-public class MyArrayList
+public class MyGenArrayList
 {
 	private Integer[] list;
 
 	/**{{{
 	 * Constructs an empty list with an initial capacity of ten.
 	 }}}*/
-	public MyArrayList() {
+	public MyGenArrayList() {
 		list = new Integer[10];
 		// TODO: you can add code here
 	}

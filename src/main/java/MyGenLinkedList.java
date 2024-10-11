@@ -21,7 +21,7 @@
  * avoid the <code>IndexOutOfBoundsException</code> and throw the
  * <code>NullPointerException</code> where noted.
  }}}*/
-public class MyLinkedList
+public class MyGenLinkedList<T>
 {
 	/**{{{
 	 * The Node class is a private inner class of the <code>MyLinkedList</code>
@@ -30,24 +30,24 @@ public class MyLinkedList
 	 * If you prefer, you may replace this with a separate top-level class.
 	 * Also, you can build a constructor or use the default constructor.
 	 }}}*/
-	private static class Node
+	private static class Node<T>
 	{
 		// These fields both default to null.
-		public Integer value;
-		public Node next;
-		public Node(Integer value, Node next) {
+		public T value;
+		public Node<T> next;
+
+		public Node(T value, Node<T> next) {
 			this.value = value;
 			this.next = next;
 		}
 	}
 
-	private Node first;
-
+	private Node<T> first;
 
 	/**{{{
 	 * Constructs an empty list.
 	 }}}*/
-	public MyLinkedList() {
+	public MyGenLinkedList() {
 		first = null;
 	}
 
@@ -56,8 +56,8 @@ public class MyLinkedList
 	 * @param item Integer to be appended to this list
 	 * @throws NullPointerException if item is null
 	 }}}*/
-	public void addFirst(Integer item) {
-		first = new Node(item, first.next);
+	public void addFirst(T item) {
+		first = new Node<T>(item, first);
 	}
 
 	/**{{{
@@ -68,8 +68,17 @@ public class MyLinkedList
 	 * @param item Integer to be inserted
 	 * @throws NullPointerException if item is null
 	 }}}*/
-	public void add(int index, Integer item) {
-		// TODO: your code goes here
+	public void add(int index, T item) {
+		if (index == 0) {
+			this.addFirst(item);
+		}
+		Node<T> prevNode = null;
+		Node<T> currNode = first;
+		for (int i = 0; i <= index; i++) {
+			prevNode = currNode;
+			currNode = currNode.next;
+		}
+		prevNode.next = new Node<T>(item, currNode);
 	}
 
 	/**{{{
@@ -78,9 +87,22 @@ public class MyLinkedList
 	 * @param index the index of the Integer to remove
 	 * @return the Integer that was removed from the list
 	 }}}*/
-	public Integer remove(int index) {
-		// TODO: modify the code here
-		return null;
+	public T remove(int index) {
+		if (index == 0) {
+			first = first.next;
+		}
+		Node<T> node = first;
+		Node<T> prevNode = first;
+		for (int i = 0; i < index; i++) {
+			prevNode = node;
+			node = node.next;
+		}
+		//Creates memory without a ref to it?
+		prevNode.next = node.next;
+		T returnVal = node.value;
+		//fixes it?
+		node = null;
+		return returnVal;
 	}
 
 	/**{{{
@@ -88,9 +110,12 @@ public class MyLinkedList
 	 * @param index index of the element to return
 	 * @return the Integer at the specified position in this list
 	 }}}*/
-	public Integer get(int index) {
-		// TODO: modify the code here
-		return null;
+	public T get(int index) {
+		Node<T> node = first;
+		for (int i = 0; i < index; i++) {
+			node = node.next;
+		}
+		return node.value;
 	}
 
 	/**{{{
@@ -100,8 +125,12 @@ public class MyLinkedList
 	 * @param item Integer to be stored at the specified position
 	 * @throws NullPointerException if item is null
 	 }}}*/
-	public void set(int index, Integer item) {
-		// TODO: your code goes here
+	public void set(int index, T item) {
+		Node<T> node = first;
+		for (int i = 0; i < index; i++) {
+			node = node.next;
+		}
+		node.value = item;
 	}
 
 	/**{{{
@@ -109,8 +138,13 @@ public class MyLinkedList
 	 * @return the number of Integers in this list
 	 }}}*/
 	public int size() {
-		// TODO: modify the code here
-		return 0;
+		int size = 0;
+		Node<T> node = first;
+		while (node.next != null) {
+			node = node.next;
+			size++;
+		}
+		return size;
 	}
 
 	/**{{{
@@ -121,8 +155,15 @@ public class MyLinkedList
 	 * or -1 if this list does not contain the Integer
 	 * @throws NullPointerException if item is null
 	 }}}*/
-	public int indexOf(Integer item) {
-		// TODO: modify the code here
+	public int indexOf(T item) {
+		Node<T> node = first;
+		int count = 0;
+		while (node.next != null) {
+			count++;
+			if (node.value == item) {
+				return count;
+			}
+		}
 		return 0;
 	}
 
@@ -132,8 +173,14 @@ public class MyLinkedList
 	 * @return true if this list contains the specified Integer
 	 * @throws NullPointerException if item is null
 	 }}}*/
-	public boolean contains(Integer item) {
-		// TODO: modify the code here
+	public boolean contains(T item) {
+		Node<T> node = first;
+		while (node.next != null) {
+			if (node.value == item) {
+				return true;
+			}
+			node = node.next;
+		}
 		return false;
 	}
 
@@ -142,7 +189,11 @@ public class MyLinkedList
 	 * call returns.
 	 }}}*/
 	public void clear() {
-		// TODO: your code goes here
+		first = null;
+		//does this leave a bunch of data that has no refrence?
+		//yes
+		//will I just have the garbage collector fix it because im tired
+		//also yes
 	}
 
 	/**{{{
@@ -150,7 +201,6 @@ public class MyLinkedList
 	 * @return true if this list is empty
 	 }}}*/
 	public boolean isEmpty() {
-		// TODO: modify the code here
-		return false;
+		return first == null;
 	}
 }
