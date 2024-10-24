@@ -30,7 +30,7 @@ public class MyLinkedList
 	 * If you prefer, you may replace this with a separate top-level class.
 	 * Also, you can build a constructor or use the default constructor.
 	 }}}*/
-	private static class Node
+	public static class Node
 	{
 		// These fields both default to null.
 		public Integer value;
@@ -41,7 +41,7 @@ public class MyLinkedList
 		}
 	}
 
-	private Node first;
+	public Node first;
 
 
 	/**{{{
@@ -57,7 +57,9 @@ public class MyLinkedList
 	 * @throws NullPointerException if item is null
 	 }}}*/
 	public void addFirst(Integer item) {
-		first = new Node(item, first.next);
+		if (item == null)
+			throw new NullPointerException();
+		this.first = new Node(item, this.first);
 	}
 
 	/**{{{
@@ -69,7 +71,18 @@ public class MyLinkedList
 	 * @throws NullPointerException if item is null
 	 }}}*/
 	public void add(int index, Integer item) {
-		// TODO: your code goes here
+		guardNull(item);
+
+		Node previous = getNode(index - 1);
+		Node toReplace = getNode(index);
+
+		if (previous == null) {
+			addFirst(item);
+		} else {
+			Node toInsert = new Node(item, null);
+			previous.next = toInsert;
+			toInsert.next = toReplace;
+		}
 	}
 
 	/**{{{
@@ -79,8 +92,11 @@ public class MyLinkedList
 	 * @return the Integer that was removed from the list
 	 }}}*/
 	public Integer remove(int index) {
-		// TODO: modify the code here
-		return null;
+		Node tmp = (index == 0) ? first : getNode(index - 1);
+		Integer returnVal = 0;
+		returnVal = getNode(index).value;
+		tmp.next = getNode(index).next;
+		return returnVal;
 	}
 
 	/**{{{
@@ -89,8 +105,7 @@ public class MyLinkedList
 	 * @return the Integer at the specified position in this list
 	 }}}*/
 	public Integer get(int index) {
-		// TODO: modify the code here
-		return null;
+		return getNode(index).value;
 	}
 
 	/**{{{
@@ -101,7 +116,9 @@ public class MyLinkedList
 	 * @throws NullPointerException if item is null
 	 }}}*/
 	public void set(int index, Integer item) {
-		// TODO: your code goes here
+		guardNull(item);
+		Node tmp = getNode(index);
+		tmp.value = item;
 	}
 
 	/**{{{
@@ -109,8 +126,13 @@ public class MyLinkedList
 	 * @return the number of Integers in this list
 	 }}}*/
 	public int size() {
-		// TODO: modify the code here
-		return 0;
+		Node tmp = first;
+		int len = 0;
+		while (tmp != null) {
+			tmp = tmp.next;
+			len++;
+		}
+		return len;
 	}
 
 	/**{{{
@@ -122,8 +144,17 @@ public class MyLinkedList
 	 * @throws NullPointerException if item is null
 	 }}}*/
 	public int indexOf(Integer item) {
-		// TODO: modify the code here
-		return 0;
+		guardNull(item);
+		Node tmp = first;
+		int index = 0;
+		while (tmp != null) {
+			if (tmp.value.equals(item)) { // pretty sure == works too but better safe than sorry
+				return index;
+			}
+			tmp = tmp.next;
+			index++;
+		}
+		return -1;
 	}
 
 	/**{{{
@@ -133,8 +164,8 @@ public class MyLinkedList
 	 * @throws NullPointerException if item is null
 	 }}}*/
 	public boolean contains(Integer item) {
-		// TODO: modify the code here
-		return false;
+		guardNull(item);
+		return (this.indexOf(item) != -1 );
 	}
 
 	/**{{{
@@ -142,7 +173,8 @@ public class MyLinkedList
 	 * call returns.
 	 }}}*/
 	public void clear() {
-		// TODO: your code goes here
+		first = null;
+		//thank you garbage collector
 	}
 
 	/**{{{
@@ -150,7 +182,23 @@ public class MyLinkedList
 	 * @return true if this list is empty
 	 }}}*/
 	public boolean isEmpty() {
-		// TODO: modify the code here
-		return false;
+		return first == null;
+	}
+
+	private void guardNull(Integer item) throws NullPointerException {
+		if (item == null)
+			throw new NullPointerException();
+	}
+
+	private Node getNode(int index) {
+		if (index < 0) return null;
+		Node tmp = first;
+		for (int i = 0; i < index; i++) {
+			if (tmp.next == null) {
+				return null;
+			}
+			tmp = tmp.next;
+		}
+		return tmp;
 	}
 }

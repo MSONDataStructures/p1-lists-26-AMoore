@@ -19,7 +19,7 @@ import java.lang.NullPointerException;
  * and you will need to throw the <code>NullPointerException</code> in places
  * as specified in the Javadoc and the JUnit <code>MyArrayListTest</code> class.
  }}}*/
-public class MyArrayList implements Iterable
+public class TMyArrayList implements Iterable
 {
 	private Integer[] list;
 	public int length;
@@ -27,7 +27,7 @@ public class MyArrayList implements Iterable
 	/**{{{
 	 * Constructs an empty list with an initial capacity of ten.
 	 }}}*/
-	public MyArrayList() {
+	public TMyArrayList() {
 		list = new Integer[10];
 		length = 0;
 	}
@@ -38,9 +38,12 @@ public class MyArrayList implements Iterable
 	 * @throws NullPointerException if item is null
 	 }}}*/
 	public void addLast(Integer item) throws NullPointerException {
-		if (item == null) throw new NullPointerException();
-
-		if (list.length <= length) list = copy(list, new Integer[length * 2]);
+		if (item == null) {
+			throw new NullPointerException();
+		}
+		if (length >= list.length) {
+			list = copy(list, new Integer[length + 10]);
+		}
 		list[length] = item;
 		length++;
 	}
@@ -55,16 +58,20 @@ public class MyArrayList implements Iterable
 	 }}}*/
 	public void add(int index, Integer item) throws NullPointerException {
 		if (item == null) throw new NullPointerException();
+		
+		if (index >= length) {
+			list = copy(list, new Integer[index * 2]);
+			list[index] = item;
+		}
 
-		if (index >= length) list = copy(list, new Integer[index  * 2]);
-//		if (list.length >= length) list = copy(list, new Integer[list.length * 2]);
-
-		for (int i = length; i >= index; i--) {
-			list[i + 1] = list[i];
+		if (index < length) {
+			if (list.length == length) list = copy(list, new Integer[list.length * 2]);
+			for (int i = length; i > index; i--) {
+				list[i + 1] = list[i];
+			}
 		}
 
 		list[index] = item;
-		length++;
 	}
 
 	/**{{{
@@ -74,16 +81,22 @@ public class MyArrayList implements Iterable
 	 * @return the element that was removed from the list
 	 }}}*/
 	public Integer remove(int index)  {
-		if (index > length || index < 0) {
-			return null;
-		}
-		Integer removedVal = list[index];
-		for (int i = index; i < length; i++) {
-			list[i] = list[i+1];
-		}
-		length--;
-		return removedVal;
+		if (index <= length && index >= 0) {
+			Integer removed;
+			removed = list[index];
 
+			if (length == list.length) {
+				list = copy(list, new Integer[list.length * 2]);
+			} else {
+				for (int i = index; i < length; i++) {
+					list[i] = list[i + 1];
+				}
+
+				length--;
+				return removed;
+			}
+		}
+		return null; 
 	}
 
 	/**{{{
@@ -92,7 +105,10 @@ public class MyArrayList implements Iterable
 	 * @return the Integer at the specified position in this list
 	 }}}*/
 	public Integer get(int index) {
-		return list[index];
+		if (index <= length && index >= 0) {
+			return list[index];
+		}
+		return null;
 	}
 
 	/**{{{
@@ -103,12 +119,10 @@ public class MyArrayList implements Iterable
 	 * @throws NullPointerException if item is null
 	 }}}*/
 	public void set(int index, Integer item) throws NullPointerException {
-		if (item == null) throw new NullPointerException();
-
-		if (index >= 0) {
-			if (index > length) {
-				list = copy(list, new Integer[index * 2]);
-			}
+		if (item == null) {
+			throw new NullPointerException();
+		}
+		if (index <= length && index >= 0) {
 			list[index] = item;
 		}
 	}
