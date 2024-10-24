@@ -92,8 +92,13 @@ public class MyLinkedList
 	 * @return the Integer that was removed from the list
 	 }}}*/
 	public Integer remove(int index) {
-		Node tmp = (index == 0) ? first : getNode(index - 1);
 		Integer returnVal = 0;
+		if (index == 0) {
+			returnVal = first.value;
+			first = first.next;
+			return returnVal;
+		}
+		Node tmp = (index == 0) ? first : getNode(index - 1);
 		returnVal = getNode(index).value;
 		tmp.next = getNode(index).next;
 		return returnVal;
