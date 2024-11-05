@@ -1,3 +1,5 @@
+import java.util.Iterator;
+
 /**{{{
  * The MyLinkedList class is the implementation of a singly-linked list of
  * integers.
@@ -21,7 +23,7 @@
  * avoid the <code>IndexOutOfBoundsException</code> and throw the
  * <code>NullPointerException</code> where noted.
  }}}*/
-public class MyLinkedList
+public class MyLinkedList implements Iterable
 {
 	/**{{{
 	 * The Node class is a private inner class of the <code>MyLinkedList</code>
@@ -41,6 +43,7 @@ public class MyLinkedList
 		}
 	}
 
+	int size;
 	public Node first;
 
 
@@ -49,6 +52,7 @@ public class MyLinkedList
 	 }}}*/
 	public MyLinkedList() {
 		first = null;
+		size = 0;
 	}
 
 	/**{{{
@@ -60,6 +64,7 @@ public class MyLinkedList
 		if (item == null)
 			throw new NullPointerException();
 		this.first = new Node(item, this.first);
+		size++;
 	}
 
 	/**{{{
@@ -72,6 +77,7 @@ public class MyLinkedList
 	 }}}*/
 	public void add(int index, Integer item) {
 		guardNull(item);
+		size++;
 
 		Node previous = getNode(index - 1);
 		Node toReplace = getNode(index);
@@ -96,11 +102,13 @@ public class MyLinkedList
 		if (index == 0) {
 			returnVal = first.value;
 			first = first.next;
+			size--;
 			return returnVal;
 		}
 		Node tmp = (index == 0) ? first : getNode(index - 1);
 		returnVal = getNode(index).value;
 		tmp.next = getNode(index).next;
+		size--;
 		return returnVal;
 	}
 
@@ -131,13 +139,7 @@ public class MyLinkedList
 	 * @return the number of Integers in this list
 	 }}}*/
 	public int size() {
-		Node tmp = first;
-		int len = 0;
-		while (tmp != null) {
-			tmp = tmp.next;
-			len++;
-		}
-		return len;
+		return size;
 	}
 
 	/**{{{
@@ -179,6 +181,7 @@ public class MyLinkedList
 	 }}}*/
 	public void clear() {
 		first = null;
+		size = 0;
 		//thank you garbage collector
 	}
 
@@ -205,5 +208,23 @@ public class MyLinkedList
 			tmp = tmp.next;
 		}
 		return tmp;
+	}
+
+	public Iterator<Integer> iterator() {
+		return new Iterator<Integer>() {
+			Node node = first;
+			public boolean hasNext() {
+				return (first.next != null);
+			}
+
+			public Integer next() {
+				if (hasNext()) {
+					node = node.next;
+
+					return node.value;
+				}
+				return null;
+			}
+		};
 	}
 }
